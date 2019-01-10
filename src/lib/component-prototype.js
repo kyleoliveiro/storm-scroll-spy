@@ -3,7 +3,7 @@ import throttle from 'raf-throttle';
 const isHidden = el => el.offsetParent === null,
       inView = el => {
           if (isHidden(el)) return false;
-        
+
           let box = el.getBoundingClientRect();
           return (box.right >= 0 && box.bottom >= 0 && box.left <= (window.innerWidth || document.documentElement.clientWidth) && box.top <= (window.innerWidth || document.documentElement.clientWidth));
       }
@@ -22,7 +22,7 @@ export default {
     },
     initListeners() {
         this.throttledScroll = throttle(this.setCurrentItem.bind(this));
-        
+
         this.throttledResize = throttle(() => {
             this.setPositions();
             this.setCurrentItem();
@@ -36,7 +36,7 @@ export default {
     getNavItems() {
         return this.DOMElements.map(item => {
             if (!item.hash || !document.querySelector(item.hash)) return null;
-            
+
             return {
                 node: item,
                 target: document.querySelector(item.hash),
@@ -92,17 +92,19 @@ export default {
             }
         }
         //nothing found
-        this.toggle(null);
+		this.toggle(null);
         (!!this.settings.callback && typeof this.settings.prehook === 'function') && this.settings.callback();
     },
     toggle(next){
         if(this.activeNavItem === next) return;
 
         if(this.activeNavItem) this.activeNavItem.node.classList.remove(this.settings.activeClassName);
-        
+
         this.activeNavItem = next;
         if(!next) return;
-
-        next.node.classList.add(this.settings.activeClassName);
+		next.node.classList.add(this.settings.activeClassName);
+		if(this.settings.callback && typeof(this.settings.callback) === 'function') {
+			this.settings.callback(next);
+		}
     }
 };
